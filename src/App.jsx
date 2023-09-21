@@ -1,36 +1,35 @@
+// App.js
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Cripto from "./Cripto"; // Asegúrate de importar el componente correctamente
+import "./App.css";
 
 function App() {
   const API_URL = import.meta.env.VITE_API_URL;
-
-  const [coins, setCoins] = useState();
+  const [coins, setCoins] = useState([]);
 
   useEffect(() => {
     axios
       .get(`${API_URL}assets`)
-      .then((data) => {
-        setCoins(data.data.data);
-        // console.log(data);
+      .then((response) => {
+        setCoins(response.data.data);
       })
-      .catch(() => {
-        console.error("Error en la petición");
+      .catch((error) => {
+        console.error("Error en la petición:", error);
       });
   }, []);
 
-  if (!coins) return <span>Cargando...</span>;
+  if (coins.length === 0) return <span>Cargando...</span>;
 
   return (
-    <>
+    <div className="app-container">
       <h1>Lista de Criptomonedas</h1>
-      <ol>
-        {coins.map(({ id, name, symbol }) => (
-          <li key={id}>
-            Nombre: {name} - {symbol}
-          </li>
+      <div className="cripto-container">
+        {coins.map(({ id, name, priceUsd }) => (
+          <Cripto key={id} name={name} priceUsd={priceUsd} />
         ))}
-      </ol>
-    </>
+      </div>
+    </div>
   );
 }
 
